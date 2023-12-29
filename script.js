@@ -85,12 +85,54 @@ function ResetScreen() {
    shouldResetScreen = false
 }
 
+function convertOperator(keyboardOperator) {
+    if (keyboardOperator === '/') return '/';
+    if (keyboardOperator === '*') return 'x';
+    if (keyboardOperator === '-') return '-';
+    if (keyboardOperator === '+') return '+';
+}
+
 function AppendDot() {
     if(currentText.textContent == ""){
         currentText.textContent = "0";
     }
     if (currentText.textContent.includes('.')) return
     currentText.textContent += ".";
+}
+
+function deleteNumber() {
+    currentText.textContent = currentText.textContent.slice(0,-1);
+}
+
+function clear() {
+    currentText.textContent = "0";
+    prevText.textContent = "";
+    firstNumber = null;
+    secondNumber = null;
+    currentOperand = null;
+}
+
+function handleKeyboardInput(e) {
+  if (e.key >= 0 && e.key <= 9)
+  {
+    AppendNumber(e.key);
+  } 
+  if (e.key == '.'){
+    AppendDot();
+  } 
+  if (e.key == '=' || e.key == 'Enter') {
+    OnEqualTo();
+  } 
+  if (e.key == 'Backspace'){
+    deleteNumber();
+  }
+  if (e.key == 'Escape'){
+    clear();
+  } 
+  if (e.key == '+' || e.key == '-' || e.key == '*' || e.key == '/')
+  {
+    OnOperatorPressed(convertOperator(e.key));
+  }
 }
 
 
@@ -106,15 +148,13 @@ numberButtons.forEach((button) => {
 equalBtn.addEventListener('click' , (event) => OnEqualTo())
 
 clearButton.addEventListener('click', function(event){
-    currentText.textContent = "0";
-    prevText.textContent = "";
-    firstNumber = null;
-    secondNumber = null;
-    currentOperand = null;
+   clear();
 })
 
 deleteButton.addEventListener('click', function(event){
-    currentText.textContent = currentText.textContent.slice(0,-1);
+    deleteNumber();
 })
 
 dotBtn.addEventListener('click',(event) => AppendDot())
+
+window.addEventListener('keydown', handleKeyboardInput)
